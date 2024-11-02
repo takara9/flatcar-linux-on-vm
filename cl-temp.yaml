@@ -1,0 +1,41 @@
+variant: flatcar
+version: 1.0.0
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDC7ciYRXg20phLiWN4Dq4JNs5pWsMU/8sHZKesREjf9OPAyE8fegP2XkIy7ZFAV1oM+TeDQvVVrIuziJWcuoXf9/tnLLOt82zKJ89EcSUBuqERuPUrp2hqD52ff/yOFGcLGMSjtxjTZLQy40ZBUgBM8cbexqQY92mo0A9MKMbHNve0Y5FhBb2nq8EEml8qbE98hvfxScmuLCAD8OUfdgQeLqIHCCjy2IcxtazChPLyEBbcLnRGMZUFnNO8lEt8RWAw5HnZ/fI70335REQ2zctiSBWatBDOYE8anvAlek5m18BCyahxfeTxe27nz+1qslqsNtjCaJs1kWl+8u8QT8/n
+
+storage:
+  files:
+  - path: /etc/hostname
+    contents:
+      inline: ${HOSTNAME}
+  - path: /etc/systemd/network/00-eth0.network
+    contents:
+      inline: |
+        [Match]
+        Name=eth0
+        [Network]
+        Address=${IPADDR_MASK}
+        Gateway=172.16.0.1
+        DNS=172.16.0.9
+
+systemd:
+  units:
+    - name: nginx.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=NGINX example
+        After=docker.service
+        Requires=docker.service
+        [Service]
+        TimeoutStartSec=0
+        ExecStartPre=-/usr/bin/docker rm --force nginx1
+        ExecStart=/usr/bin/docker run --name nginx1 --pull always --log-driver=journald --net host docker.io/nginx:1
+        ExecStop=/usr/bin/docker stop nginx1
+        Restart=always
+        RestartSec=5s
+        [Install]
+        WantedBy=multi-user.target      
