@@ -67,3 +67,45 @@ virsh console ${HOSTNAME}
 virsh undefine ${HOSTNAME}
 ```
 
+
+## virsh ブリッジネットワークの設定
+
+```
+# virsh net-list
+ Name              State    Autostart   Persistent
+----------------------------------------------------
+ bridge-host-pri   active   yes         yes
+ bridge-host-pub   active   yes         yes
+ default           active   yes         yes
+
+# virsh net-dumpxml  bridge-host-pri 
+<network connections='1'>
+  <name>bridge-host-pri</name>
+  <uuid>72fdd30c-827e-4352-94ee-083201635e70</uuid>
+  <forward mode='bridge'/>
+  <bridge name='br1'/>
+</network>
+
+# virsh net-dumpxml  bridge-host-pub
+<network>
+  <name>bridge-host-pub</name>
+  <uuid>7de311ee-7f85-420d-9f5c-b6fe01be303d</uuid>
+  <forward mode='bridge'/>
+  <bridge name='br0'/>
+</network>
+```
+
+## VMホストのブリッジ設定
+
+マザーボードに、２ポートのNICを追加してあります。
+NICは、10Gtek 10/100/1000Mbps ギガビット イーサネット PCI Express NIC ネットワークカード,Intel 82571コントローラー, デュアル RJ45ポートで Amazonから入手できます。
+購入時の金額 3,999円 
+
+```
+# brctl show
+bridge name     bridge id               STP enabled     interfaces
+br-901072bb2d9e         8000.02429bd70e41       no
+br0             8000.ca606fecc010       yes             enp3s0f0
+br1             8000.2e741c84430b       yes             enp3s0f1
+```
+
