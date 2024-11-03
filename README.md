@@ -6,9 +6,9 @@ Ubuntu Vitrual Managerがセットアップされている環境で、Flatcar Li
 
 ```
 sudo -s
-export HOSTNAME=flatcar3
+export HOSTNAME=flatcar1
 export DISK=/var/lib/libvirt/images/boot-${HOSTNAME}.qcow2
-export IPADDR_MASK=172.16.0.113/16
+export IPADDR_MASK=172.16.0.111/16
 
 modprobe nbd max_part=8
 qemu-img create -f qcow2 ${DISK} 20G
@@ -109,3 +109,6 @@ br0             8000.ca606fecc010       yes             enp3s0f0
 br1             8000.2e741c84430b       yes             enp3s0f1
 ```
 
+## 問題解決
+
+- https://bbs.archlinux.org/viewtopic.php?id=197950
